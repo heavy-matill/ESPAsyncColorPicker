@@ -81,6 +81,21 @@
             })
         }
 
+        function loadRGBW(bRestore = false) {
+            var url = '/get'
+            if (bRestore) {
+                url = '/restore'
+            }
+            loadData(url, function () {
+                setColor("#" + this.responseText.slice(0, 6));
+                setWhite(parseInt(this.responseText.slice(6), 16));
+            })
+        }
+
+        function sendRestore() {
+            loadRGBW(bRestore = true);
+        }
+
         function sendColor() {
             color = document.getElementById('inputColor').value;
             const r = parseInt(color.substr(1, 2), 16)
@@ -91,6 +106,17 @@
 
         function sendWhite() {
             sendData('/set?w=' + document.getElementById('inputW').value);
+        }
+
+        function switchOff() {
+            setColor("#000000");
+            sendColor();
+            setWhite(0);
+            sendWhite();
+        }
+
+        function sendStore() {
+            sendData('/store');
         }
     </script>
 
@@ -117,33 +143,10 @@
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Light mixing</label>
             <div class="col-sm-10">
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios0" value="0" checked>
-                    <label class="form-check-label">
-                        combined color and warm white
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="1">
-                    <label class="form-check-label">
-                        color only
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="2">
-                    <label class="form-check-label">
-                        warm white only
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-sm-10">
-                <!--<button type="submit" class="col-sm-2 btn btn-success" onclick="sendColor();sendWhite();">Apply</button>-->
-                <button class="col-sm-2 btn btn-warning" onclick="loadColor();loadWhite();">Reset</button>
-                <button class="col-sm-2 btn btn-info" onclick="">Store</button>
+                <button class="col-sm-2 btn btn-success" onclick="sendStore();">Store</button>
+                <button class="col-sm-2 btn btn-warning" onclick="sendRestore();">Restore</button>
+                <button class="col-sm-2 btn btn-dark" onclick="switchOff();">Switch off</button>
                 <button class="col-sm-2 btn btn-secondary">Settings</button>
             </div>
         </div>
