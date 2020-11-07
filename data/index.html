@@ -7,19 +7,19 @@
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <style>
         input[type="color"] {
-            -webkit-appearance: none;
+            opacity: 0;
             border: none;
             width: 100%;
             height: 100%;
         }
 
-        input[type="color"]::-webkit-color-swatch-wrapper {
+        /* input[type="color"]::-webkit-color-swatch-wrapper {
             padding: 0;
         }
 
         input[type="color"]::-webkit-color-swatch {
             border: none;
-        }
+        }*/
 
         input[type="range"] {
             width: 100%;
@@ -45,10 +45,12 @@
         }
 
         function styleColor(s) {
+            document.getElementById('inputColorWrapper').style.backgroundColor = s;
             document.bgColor = s;
         }
 
         function styleWhite(w) {
+            document.getElementById('inputWWrapper').style.background = 'rgb(' + w + ',' + w + ',0)';
             document.getElementById('inputW').style.background = 'rgb(' + w + ',' + w + ',0)';
         }
 
@@ -123,32 +125,31 @@
 <body onload="loadColor();loadWhite();">
     <div>
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Color</label>
-            <div class="col-sm-5">
-                <input type="color" id="inputColor" oninput="setColor(this.value);sendColor();">
+            <label class="col-md-12 col-lg-2 col-form-label">Color</label>
+            <div class="col-md-6 col-lg-5 form-control" id="inputColorWrapper">
+                <input class="form-control" type="color" style="" id="inputColor"
+                    oninput="setColor(this.value);sendColor();">
             </div>
-            <div class="col-sm-5">
+            <div class="col-md-6 col-lg-5">
                 <input type="text" class="form-control" id="inputHex" onfocusout="setColor(this.value)">
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Warm white</label>
-            <div class="col-sm-5">
-                <input type="range" min="0" max="255" class="form-control" id="inputW"
+            <label class="col-md-12 col-lg-2 col-form-label">Warm white</label>
+            <div class="col-md-6 col-lg-5 form-control" id=inputWWrapper>
+                <input type="range" min="0" max="255" id="inputW"
                     oninput="setWhite(this.value);sendWhite();">
             </div>
-            <div class="col-sm-5">
+            <div class="col-md-6 col-lg-5">
                 <input type="number" min="0" max="255" class="form-control" id="inputWNumber"
                     onchange="setWhite(this.value)">
             </div>
         </div>
         <div class="form-group row">
-            <div class="col-sm-10">
-                <button class="col-sm-2 btn btn-success" onclick="sendStore();">Store</button>
-                <button class="col-sm-2 btn btn-warning" onclick="sendRestore();">Restore</button>
-                <button class="col-sm-2 btn btn-dark" onclick="switchOff();">Switch off</button>
-                <button class="col-sm-2 btn btn-secondary">Settings</button>
-            </div>
+            <button class="col-md-6 col-lg-3 btn btn-success" onclick="sendStore();">Store</button>
+            <button class="col-md-6 col-lg-3 btn btn-warning" onclick="sendRestore();">Restore</button>
+            <button class="col-md-6 col-lg-3 btn btn-dark" onclick="switchOff();">Switch off</button>
+            <button class="col-md-6 col-lg-3 btn btn-secondary">Settings</button>
         </div>
     </div>
 </body>
