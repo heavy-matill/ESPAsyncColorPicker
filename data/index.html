@@ -50,8 +50,9 @@
         }
 
         function styleWhite(w) {
-            document.getElementById('inputWWrapper').style.background = 'rgb(' + w + ',' + w + ',0)';
-            document.getElementById('inputW').style.background = 'rgb(' + w + ',' + w + ',0)';
+            yellowBrightness = 'rgb(' + w + ',' + w + ',0)'
+            document.getElementById('inputWWrapper').style.background = yellowBrightness;
+            document.getElementById('inputW').style.background = yellowBrightness;
         }
 
         function loadData(url, callback) {
@@ -137,8 +138,7 @@
         <div class="form-group row">
             <label class="col-md-12 col-lg-2 col-form-label">Warm white</label>
             <div class="col-md-6 col-lg-5 form-control" id=inputWWrapper>
-                <input type="range" min="0" max="255" id="inputW"
-                    oninput="setWhite(this.value);sendWhite();">
+                <input type="range" min="0" max="255" id="inputW" oninput="setWhite(this.value);sendWhite();">
             </div>
             <div class="col-md-6 col-lg-5">
                 <input type="number" min="0" max="255" class="form-control" id="inputWNumber"
