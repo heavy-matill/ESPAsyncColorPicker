@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Circuits4you.com | RGB LED Color Control</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 100%;
+        }
+
+        input {
+            text-align: center;
+        }
+    </style>
+    <script>
+        function setColor(s) {
+            s = s.toUpperCase();
+            document.getElementById('inputColor').value = s;
+            document.getElementById('inputHex').value = s;
+            styleColor(s);
+        }
+
+        function setWhite(w) {
+            document.getElementById('inputW').value = w;
+            document.getElementById('inputWNumber').value = w;
+            styleWhite(w);
+        }
+
+        function styleColor(s) {
+            document.bgColor = s;
+        }
+
+        function styleWhite(w) {
+            document.getElementById('inputW').style.background = 'rgb(' + w + ',' + w + ',0)';
+        }
+
+        function loadData(url, callback) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    callback.apply(xhttp);
+                }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.send();
+        }
+
+        function sendData(url) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", url, true);
+            xhttp.send();
+        }
+
+        function loadColor() {
+            loadData('/getRGB', function () {
+                setColor("#" + this.responseText);
+            })
+        }
+
+        function loadWhite() {
+            loadData('/getW', function () {
+                setWhite(this.responseText);
+            })
+        }
+
+        function sendColor() {
+            color = document.getElementById('inputColor').value;
+            const r = parseInt(color.substr(1, 2), 16)
+            const g = parseInt(color.substr(3, 2), 16)
+            const b = parseInt(color.substr(5, 2), 16)
+            sendData('/set?r=' + r + '&g=' + g + '&b=' + b);
+        }
+
+        function sendWhite() {
+            sendData('/set?w=' + document.getElementById('inputW').value);
+        }
+    </script>
+
+<body onload="loadColor();loadWhite();">
+    <div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Color</label>
+            <div class="col-sm-5">
+                <input type="color" id="inputColor" oninput="setColor(this.value);sendColor();">
+            </div>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="inputHex" onfocusout="setColor(this.value)">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Warm white</label>
+            <div class="col-sm-5">
+                <input type="range" min="0" max="255" class="form-control" id="inputW"
+                    oninput="setWhite(this.value);sendWhite();">
+            </div>
+            <div class="col-sm-5">
+                <input type="number" min="0" max="255" class="form-control" id="inputWNumber"
+                    onchange="setWhite(this.value)">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Light mixing</label>
+            <div class="col-sm-10">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios0" value="0" checked>
+                    <label class="form-check-label">
+                        combined color and warm white
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="1">
+                    <label class="form-check-label">
+                        color only
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="2">
+                    <label class="form-check-label">
+                        warm white only
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <!--<button type="submit" class="col-sm-2 btn btn-success" onclick="sendColor();sendWhite();">Apply</button>-->
+                <button class="col-sm-2 btn btn-warning" onclick="loadColor();loadWhite();">Reset</button>
+                <button class="col-sm-2 btn btn-info" onclick="">Store</button>
+                <button class="col-sm-2 btn btn-secondary">Settings</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
