@@ -13,9 +13,22 @@
 #include <sstream>
 #include <ArduinoJson.h>
 
+#include <FastLED.h>
+#include "FastLED_RGBW.h"
+
 #define RedLED 15
 #define GreenLED 12
 #define BlueLED 13
+
+#define LED_PIN 5
+#define COLOR_ORDER RGB
+#define CHIPSET WS2812B
+#define BRIGHTNESS 255
+#define SERPENTINE true
+#define NUM_LEDS 10
+
+CRGBW leds[NUM_LEDS];
+CRGB *ledsRGB = (CRGB *)&leds[0];
 
 //global current colors
 uint8_t r, g, b, w;
@@ -60,7 +73,7 @@ String getRGB()
 String rgbw2hex(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _w)
 {
   char hex[9] = {0};
-  sprintf(hex, "%02X%02X%02X%02X", _r, _g, _b,  _w); //convert to an hexadecimal string. Lookup sprintf for what %02X means.
+  sprintf(hex, "%02X%02X%02X%02X", _r, _g, _b, _w); //convert to an hexadecimal string. Lookup sprintf for what %02X means.
   return hex;
 }
 String getRGBW()
@@ -82,6 +95,8 @@ void setColor()
   analogWrite(RedLED, r);
   analogWrite(GreenLED, g);
   analogWrite(BlueLED, b);
+
+  fill_solid(leds, NUM_LEDS, CRGBW(r, g, b, w));
 }
 
 // Loads the configuration from a file
@@ -163,6 +178,13 @@ void setup()
 {
   Serial.begin(115200);
 
+  // RGBW Setup
+  FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(ledsRGB, getRGBWsize(NUM_LEDS)); //.setCorrection( TypicalLEDStrip );
+  FastLED.setBrightness(BRIGHTNESS);
+    fill_solid(leds, NUM_LEDS, CRGBW(r, g, b, w));
+    FastLED.show();
+
+
   // Start the SPI Flash File System
   SPIFFS.begin();
   // load stored config
@@ -224,7 +246,12 @@ void loop()
 {
   wifiManager.safeLoop();
 
-  guard = true;
+  guard = true;  
+  EVERY_N_MILLIS(50)
+  {
+    fill_solid(leds, NUM_LEDS, CRGBW(r, g, b, w));
+    FastLED.show();
+  } // slowly cycle the "base color" through the rainbow
   wifiManager.criticalLoop();
   guard = false;
 }
