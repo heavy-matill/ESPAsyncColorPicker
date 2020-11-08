@@ -3,8 +3,15 @@
 
 <head>
     <title>ESP Async Color Picker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script>
+        $(document).ready(function () {
+            $('#nav').load('nav.html');
+        });
+    </script>
     <style>
         input[type="color"] {
             opacity: 0;
@@ -46,7 +53,7 @@
 
         function styleColor(s) {
             document.getElementById('inputColorWrapper').style.backgroundColor = s;
-            document.bgColor = s;
+            document.body.style.backgroundColor = s;
         }
 
         function styleWhite(w) {
@@ -124,34 +131,36 @@
     </script>
 
 <body onload="loadColor();loadWhite();">
-    <div>
-        <div class="form-group row">
-            <label class="col-md-12 col-lg-2 col-form-label">Color</label>
-            <div class="col-md-6 col-lg-5 form-control" id="inputColorWrapper">
-                <input class="form-control" type="color" style="" id="inputColor"
-                    oninput="setColor(this.value);sendColor();">
+    <div id="nav"></div>
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Pick a color</h1>
+            <div class="form-group row">
+                <label class="col-md-12 col-lg-2 col-form-label">Color</label>
+                <div class="col-md-6 col-lg-5 form-control" id="inputColorWrapper">
+                    <input class="form-control" type="color" style="" id="inputColor"
+                        oninput="setColor(this.value);sendColor();">
+                </div>
+                <input type="text" class="col-md-6 col-lg-5 form-control" id="inputHex"
+                    onfocusout="setColor(this.value)">
             </div>
-            <div class="col-md-6 col-lg-5">
-                <input type="text" class="form-control" id="inputHex" onfocusout="setColor(this.value)">
-            </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-md-12 col-lg-2 col-form-label">Warm white</label>
-            <div class="col-md-6 col-lg-5 form-control" id=inputWWrapper>
-                <input type="range" min="0" max="255" id="inputW" oninput="setWhite(this.value);sendWhite();">
-            </div>
-            <div class="col-md-6 col-lg-5">
-                <input type="number" min="0" max="255" class="form-control" id="inputWNumber"
+            <div class="form-group row">
+                <label class="col-md-12 col-lg-2 col-form-label">Warm white</label>
+                <div class="col-md-6 col-lg-5 form-control" id=inputWWrapper>
+                    <input type="range" min="0" max="255" id="inputW" oninput="setWhite(this.value);sendWhite();">
+                </div>
+                <input type="number" min="0" max="255" class="col-md-6 col-lg-5 form-control" id="inputWNumber"
                     onchange="setWhite(this.value)">
             </div>
-        </div>
-        <div class="form-group row">
-            <button class="col-md-6 col-lg-3 btn btn-success" onclick="sendStore();">Store</button>
-            <button class="col-md-6 col-lg-3 btn btn-warning" onclick="sendRestore();">Restore</button>
-            <button class="col-md-6 col-lg-3 btn btn-dark" onclick="switchOff();">Switch off</button>
-            <button class="col-md-6 col-lg-3 btn btn-secondary">Settings</button>
+            <div class="form-group row">
+                <button class="col-md-6 col-lg-3 btn btn-success" onclick="sendStore();">Store</button>
+                <button class="col-md-6 col-lg-3 btn btn-warning" onclick="sendRestore();">Restore</button>
+                <button class="col-md-6 col-lg-3 btn btn-dark" onclick="switchOff();">Switch off</button>
+                <button class="col-md-6 col-lg-3 btn btn-secondary">Settings</button>
+            </div>
         </div>
     </div>
+
 </body>
 
 </html>
