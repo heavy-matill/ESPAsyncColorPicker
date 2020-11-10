@@ -13,22 +13,24 @@
 #include <sstream>
 #include <ArduinoJson.h>
 
+#define FASTLED_RGBW
+#define FASTLED_ESP8266_DMA
 #include <FastLED.h>
-#include "FastLED_RGBW.h"
 
 #define RedLED 15
 #define GreenLED 12
 #define BlueLED 13
 
-#define LED_PIN 5
+#define LED_PIN 3
 #define COLOR_ORDER RGB
-#define CHIPSET WS2812B
+#define CHIPSET NEOPIXEL
 #define BRIGHTNESS 255
 #define SERPENTINE true
 #define NUM_LEDS 10
 
-CRGBW leds[NUM_LEDS];
-CRGB *ledsRGB = (CRGB *)&leds[0];
+//CRGBW leds[NUM_LEDS];
+//CRGB *ledsRGB = (CRGB *)&leds[0];
+CRGB leds[NUM_LEDS];
 
 //global current colors
 uint8_t r, g, b, w;
@@ -96,7 +98,8 @@ void setColor()
   analogWrite(GreenLED, g);
   analogWrite(BlueLED, b);
 
-  fill_solid(leds, NUM_LEDS, CRGBW(r, g, b, w));
+  //fill_solid(leds, NUM_LEDS, CRGBW(r, g, b, w));
+  fill_solid(leds, NUM_LEDS, CRGB(r, g, b));
 }
 
 // Loads the configuration from a file
@@ -179,9 +182,11 @@ void setup()
   Serial.begin(115200);
 
   // RGBW Setup
-  FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(ledsRGB, getRGBWsize(NUM_LEDS)); //.setCorrection( TypicalLEDStrip );
+  //FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(ledsRGB, getRGBWsize(NUM_LEDS)); //.setCorrection( TypicalLEDStrip );
+  FastLED.addLeds<CHIPSET, LED_PIN>(leds, NUM_LEDS); //.setCorrection( TypicalLEDStrip );
   FastLED.setBrightness(BRIGHTNESS);
-    fill_solid(leds, NUM_LEDS, CRGBW(r, g, b, w));
+    //fill_solid(leds, NUM_LEDS, CRGBW(r, g, b, w));
+    fill_solid(leds, NUM_LEDS, CRGB(r, g, b));
     FastLED.show();
 
 
@@ -249,7 +254,8 @@ void loop()
   guard = true;  
   EVERY_N_MILLIS(50)
   {
-    fill_solid(leds, NUM_LEDS, CRGBW(r, g, b, w));
+    //fill_solid(leds, NUM_LEDS, CRGBW(r, g, b, w));
+    fill_solid(leds, NUM_LEDS, CRGB(r, g, b));
     FastLED.show();
   } // slowly cycle the "base color" through the rainbow
   wifiManager.criticalLoop();
