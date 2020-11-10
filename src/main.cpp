@@ -37,6 +37,8 @@ uint8_t r, g, b, w;
 
 //AsyncWebServer wifiManagerServer(80);
 AsyncWebServer server(80);
+AsyncWebServer server2(81);
+AsyncWebSocket ws("/ws");
 DNSServer dns;
 AsyncWiFiManager wifiManager(&server, &dns);
 
@@ -177,6 +179,44 @@ void restoreColors()
   setColor();
 }
 
+void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
+ 
+  if(type == WS_EVT_CONNECT){
+ 
+    Serial.println("Websocket client connection received");
+    client->text("Hello from ESP32 Server");
+ 
+  } else if(type == WS_EVT_DISCONNECT){
+    Serial.println("Client disconnected");
+ 
+  } else if(type == WS_EVT_DATA){
+    //data packet
+    AwsFrameInfo * info = (AwsFrameInfo*)arg;
+    if(info->final && info->index == 0 && info->len == len){
+      //the whole message is in a single frame and we got all of it's data
+      //os_printf("ws[%s][%u] %s-message[%llu]: ", server->url(), client->id(), (info->opcode == WS_TEXT)?"text":"binary", info->len);
+      if(info->opcode == WS_TEXT){
+        // text message        
+        Serial.print("got text message: ");
+        //data[len] = 0;
+        String str = (char*)data;
+        Serial.println(str.substring(0,len));
+      } else {
+        // binary meassage
+        Serial.print("got binary data: ");
+        for(size_t i=0; i < info->len; i++){
+          
+        Serial.print(data[i],HEX);
+        }
+        r = data[0];
+        g = data[1];
+        b = data[2];
+        Serial.println();
+      }
+    }
+  }
+}
+
 void setup()
 {
   Serial.begin(115200);
@@ -198,6 +238,12 @@ void setup()
 
   // start wifi before server
   // and server portal without blocking (dont use wifiManager.autoConnect())
+  
+  // websocket settings
+  ws.onEvent(onWsEvent);
+  server2.addHandler(&ws);  
+  server2.begin();
+
   wifiManager.startConfigPortalModeless("AutoConnectAP", "Password");
 
   // Manually server responses under certain urls (overwrites static SPIFFS serving as found below)
@@ -242,6 +288,8 @@ void setup()
   server.serveStatic("/", SPIFFS, "/") //map root url [arg0] to root of "/data" [arg2]
       .setDefaultFile("index.html");
   //.setTemplateProcessor(processor); // optional processor
+
+  
 
   Serial.println("Finished setup.");
   server.begin();

@@ -38,6 +38,9 @@
         }
     </style>
     <script>
+        var ws = new WebSocket("ws://192.168.178.63:81/ws");
+        var rgb = new Uint8Array(3);
+
         function setColor(s) {
             s = s.toUpperCase();
             document.getElementById('inputColor').value = s;
@@ -108,10 +111,10 @@
 
         function sendColor() {
             color = document.getElementById('inputColor').value;
-            const r = parseInt(color.substr(1, 2), 16)
-            const g = parseInt(color.substr(3, 2), 16)
-            const b = parseInt(color.substr(5, 2), 16)
-            sendData('/set?r=' + r + '&g=' + g + '&b=' + b);
+            for (let index = 0; index < rgb.length; index++) {
+                rgb[index] = parseInt(color.substr(index * 2 + 1, 2), 16);
+            }
+            ws.send(rgb);
         }
 
         function sendWhite() {
