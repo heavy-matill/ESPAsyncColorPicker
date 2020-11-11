@@ -38,7 +38,7 @@
         }
     </style>
     <script>
-        var ws = new WebSocket("ws://192.168.178.63:81/ws");
+        var ws = new WebSocket("ws://" + location.hostname + ":81/ws");
         var rgb = new Uint8Array(3);
 
         function setColor(s) {
